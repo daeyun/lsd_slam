@@ -10,6 +10,8 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 #  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
 set(ROS_BUILD_TYPE Release)
 
+find_package(OpenCV REQUIRED)
+
 rosbuild_init()
 
 ADD_SUBDIRECTORY(${PROJECT_SOURCE_DIR}/thirdparty/Sophus)
@@ -60,14 +62,16 @@ set(HEADER_FILES
 
 include_directories(
   ${PROJECT_SOURCE_DIR}/thirdparty/Sophus
+  ${OpenCV_INCLUDE_DIRS}
 )  
 
 rosbuild_add_executable(viewer src/main_viewer.cpp ${SOURCE_FILES} ${HEADER_FILES})
 
-target_link_libraries(viewer ${QGLViewer_LIBRARIES} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} GL glut GLU)
+target_link_libraries(viewer ${QGLViewer_LIBRARIES} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARY} GL glut GLU ${OpenCV_LIBS})
 
 rosbuild_link_boost(viewer thread)
 
 
 rosbuild_add_executable(videoStitch src/main_stitchVideos.cpp)
 
+target_link_libraries(videoStitch ${OpenCV_LIBS})

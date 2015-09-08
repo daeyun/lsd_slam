@@ -10,6 +10,8 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 #  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
 set(ROS_BUILD_TYPE Release)
 
+find_package(OpenCV REQUIRED)
+
 rosbuild_init() 
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
@@ -78,6 +80,7 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/thirdparty/Sophus
   ${CSPARSE_INCLUDE_DIR} #Has been set by SuiteParse
   ${CHOLMOD_INCLUDE_DIR} #Has been set by SuiteParse
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 
@@ -85,7 +88,7 @@ include_directories(
 rosbuild_add_library(lsdslam SHARED ${SOURCE_FILES})
 target_link_libraries(lsdslam ${FABMAP_LIB} g2o_core g2o_stuff csparse cxsparse g2o_solver_csparse g2o_csparse_extension g2o_types_sim3 g2o_types_sba X11)
 rosbuild_link_boost(lsdslam thread)
-
+target_link_libraries(lsdslam ${OpenCV_LIBS})
 
 # build live ros node
 rosbuild_add_executable(live_slam src/main_live_odometry.cpp)
